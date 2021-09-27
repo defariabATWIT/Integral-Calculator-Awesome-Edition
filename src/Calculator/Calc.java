@@ -3,7 +3,6 @@ package Calculator;
 import java.util.Scanner;
 import java.lang.Math;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 // Fun fact: Sharks are older than dinosaurs
@@ -20,8 +19,8 @@ public class Calc {
 		List<Double> term_values = new ArrayList<>();
 		List<Double> term_exponents = new ArrayList<>();
 		
-		double range_minimum;
-		double range_maximum;
+		double minimum;
+		double maximum;
 		int rectangles;
 		double range_modifier;
 		int sum_type;
@@ -56,10 +55,12 @@ public class Calc {
 		
 		// Outputs original equation so you can verify this is my fault and not your own
 		System.out.println("The original equation is: ");
-		for (int p = 0; p < term_values.size(); p++) {
+		for (int p = 0; p < values; p++) {
 			System.out.print(term_values.get(p));
-			if (p < term_exponents.size()) {
+			if (p < exponents) {
 				System.out.print("x^" + term_exponents.get(p) + " + ");
+			}else if (p + 1 < values){
+				System.out.print(" + ");
 			}
 		}
 		// Unused derivative finder, fully functional, un-comment to use
@@ -75,14 +76,14 @@ public class Calc {
 		// Asks for data related to the integral
 		System.out.println("");
 		System.out.print("Enter the minimum: ");
-		range_minimum = input.nextDouble();
+		minimum = input.nextDouble();
 		System.out.print("Enter the maximum: ");
-		range_maximum = input.nextDouble();
+		maximum = input.nextDouble();
 		System.out.print("Enter number of rectangles: ");
 		rectangles = input.nextInt();
 		
 		// "(b - a)/ n" but the name is cooler
-		range_modifier = (range_maximum - range_minimum)/rectangles;
+		range_modifier = (maximum - minimum)/rectangles;
 		
 		// This changes one variable that messes with the x variable to give left, right, or mid sum
 		System.out.println("Left, Right or mid-point Reimann's sum?");
@@ -99,7 +100,7 @@ public class Calc {
 		// Each answer is then added into a list
 		for(int w = 0; w < rectangles; w++) {
 			for(int u = 0; u < values; u++) {
-				placeholder = range_minimum + ((w + sum_changer) * range_modifier);
+				placeholder = minimum + ((w + sum_changer) * range_modifier);
 				if(u < exponents) {
 					answer = Math.pow(placeholder, term_exponents.get(u)) * term_values.get(u);
 				}else {
