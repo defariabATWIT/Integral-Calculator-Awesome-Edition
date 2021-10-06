@@ -16,6 +16,7 @@ public class Calc {
 		List<Double> term_exponents = new ArrayList<>();
 		List<Double> answers = new ArrayList<>();
 		List<Double> trap_answers = new ArrayList<>();
+		String rule = "Error";
 		
 		
 		double minimum, maximum, sum_type, range_modifier, answer3, placeholder;
@@ -29,7 +30,7 @@ public class Calc {
 		// Takes in original equation
 		System.out.print("How many terms does the original equation have? ");
 		values = input.nextInt();
-		System.out.print("How many of the " + values + " values have have a variable? ");
+		System.out.print("How many of the " + values + " values have a variable? ");
 		exponents = input.nextInt();
 		
 		for (int i = 0; i < values; i++) {
@@ -55,6 +56,7 @@ public class Calc {
 				System.out.print(" + ");
 			}
 		}
+		
 		// Unused derivative finder, fully functional, un-comment to use
 //		System.out.println("");
 //		System.out.println("The derivative of the equation is: ");
@@ -77,19 +79,28 @@ public class Calc {
 		// "(b - a)/ n" but the name is cooler
 		range_modifier = (maximum - minimum)/rectangles;
 		
-		// This changes one variable that messes with the x variable to give left, right, or mid sum
-		System.out.println("Left, Right, Mid-point, Trapezoidal, or Simpson's Reimann's sum?");
+		// This changes one variable that messes with the x variable to determine the rule
+		System.out.println("Left, Right, Mid-point, Trapezoidal, or Simpson's Riemann's sum?");
 		System.out.print("Enter '1', '2', '3', '4', or '5' respectively: ");
 		sum_type = input.nextInt();
 		
-		if(sum_type == 2) {
+		if(sum_type == 1) {
+			rule = "Left Hand";
+		}else if(sum_type == 2) {
 			sum_changer = 1;
-		}else if((sum_type == 3) || (sum_type == 5)){
+			rule = "Right Hand";
+		}else if(sum_type == 3){
 			sum_changer = 0.5;
+			rule = "Midpoint";
+		}else if(sum_type == 4) {
+			rule = "Trapezoidal";
+		}else if(sum_type == 5) {
+			sum_changer = 0.5;
+			rule = "Simpson's";
 		}
 		
 		// Riemann Sum equation. First loop is each rectangle x point, second loop is each value with that x
-		// Each answer is then added into a list
+		// Each answer is then added into a list. For Left Hand, Right Hand, and Midpoint
 		if(sum_type <= 3 || sum_type == 5) {
 			for(int w = 0; w < rectangles; w++) {
 				for(int u = 0; u < values; u++) {
@@ -104,6 +115,7 @@ public class Calc {
 			}
 		}
 		
+		// Finds the Trapezoidal sum
 		if(sum_type > 3) {
 			for(int w = 0; w < rectangles; w++) {
 				for(int u = 0; u < values; u++) {
@@ -127,11 +139,11 @@ public class Calc {
 			}
 		}
 		
+		// Finds the Simpson's sum by calling the answers for Trapezoidal and Midpoint
 		if(sum_type == 5) {
 			mid = answers.stream().mapToDouble(Double::doubleValue).sum();
 			trap = trap_answers.stream().mapToDouble(Double::doubleValue).sum();
 		}
-		
 		
 		// Finds the sum of all answers to obtain the ULTIMATE ANSWER
 		if(sum_type <=3) {
@@ -141,7 +153,7 @@ public class Calc {
 		}else if(sum_type == 5){
 			sum = ((2 * mid) + trap)/3;
 		}
-		System.out.println("The Riemann sum is " + sum);
+		System.out.printf("The %s Riemann sum is %f%n", rule, sum);
 		
 	}
 
