@@ -10,25 +10,16 @@ public class Calc {
 
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);
-		int values;
-		int exponents;
-		
-		int place;
-		double inputted_value;
-		double inputted_exponent;
+		int values, exponents, rectangles, place;
+		double inputted_value, inputted_exponent;
 		List<Double> term_values = new ArrayList<>();
 		List<Double> term_exponents = new ArrayList<>();
-		
-		double minimum;
-		double maximum;
-		int rectangles;
-		double range_modifier;
-		int sum_type;
-		double answer;
-		double sum;
 		List<Double> answers = new ArrayList<>();
-		double placeholder;
-		double sum_changer = 0;
+		List<Double> trap_answers = new ArrayList<>();
+		
+		
+		double minimum, maximum, sum_type, range_modifier, answer3, placeholder;
+		double answer = 0, answer2 = 0, sum = 0, sum_changer = 0, mid = 0, trap = 0;
 		
 		// Introductory message/ instructions
 		System.out.println("This calculator is used to find the Reimann sum of an equation with one variable");
@@ -58,8 +49,9 @@ public class Calc {
 		for (int p = 0; p < values; p++) {
 			System.out.print(term_values.get(p));
 			if (p < exponents) {
-				System.out.print("x^" + term_exponents.get(p) + " + ");
-			}else if (p + 1 < values){
+				System.out.print("x^" + term_exponents.get(p));
+			}
+			if (p < values - 1){
 				System.out.print(" + ");
 			}
 		}
@@ -86,33 +78,70 @@ public class Calc {
 		range_modifier = (maximum - minimum)/rectangles;
 		
 		// This changes one variable that messes with the x variable to give left, right, or mid sum
-		System.out.println("Left, Right or mid-point Reimann's sum?");
-		System.out.print("Enter '1', '2', or '3' respectively: ");
+		System.out.println("Left, Right, Mid-point, Trapezoidal, or Simpson's Reimann's sum?");
+		System.out.print("Enter '1', '2', '3', '4', or '5' respectively: ");
 		sum_type = input.nextInt();
 		
 		if(sum_type == 2) {
 			sum_changer = 1;
-		}else if(sum_type == 3){
+		}else if((sum_type == 3) || (sum_type == 5)){
 			sum_changer = 0.5;
 		}
 		
 		// Riemann Sum equation. First loop is each rectangle x point, second loop is each value with that x
 		// Each answer is then added into a list
-		for(int w = 0; w < rectangles; w++) {
-			for(int u = 0; u < values; u++) {
-				placeholder = minimum + ((w + sum_changer) * range_modifier);
-				if(u < exponents) {
-					answer = Math.pow(placeholder, term_exponents.get(u)) * term_values.get(u);
-				}else {
-					answer = term_values.get(u);
+		if(sum_type <= 3 || sum_type == 5) {
+			for(int w = 0; w < rectangles; w++) {
+				for(int u = 0; u < values; u++) {
+					placeholder = minimum + ((w + sum_changer) * range_modifier);
+					if(u < exponents) {
+						answer = range_modifier * (Math.pow(placeholder, term_exponents.get(u)) * term_values.get(u));
+					}else {
+						answer = term_values.get(u);
+					}
+					answers.add(answer);
 				}
-				answers.add(answer);
 			}
 		}
 		
+		if(sum_type > 3) {
+			for(int w = 0; w < rectangles; w++) {
+				for(int u = 0; u < values; u++) {
+					placeholder = minimum + w * range_modifier;
+					if(u < exponents) {
+						answer = Math.pow(placeholder, term_exponents.get(u)) * term_values.get(u);
+					}else {
+						answer = term_values.get(u);
+					}
+					
+					placeholder = minimum + (w + 1) * range_modifier;
+					if(u < exponents) {
+						answer2 = Math.pow(placeholder, term_exponents.get(u)) * term_values.get(u);
+					}else {
+						answer2 = term_values.get(u);
+					}
+					
+					answer3 = 0.5 * (answer + answer2) * range_modifier;
+					trap_answers.add(answer3);
+				}
+			}
+		}
+		
+		if(sum_type == 5) {
+			mid = answers.stream().mapToDouble(Double::doubleValue).sum();
+			trap = trap_answers.stream().mapToDouble(Double::doubleValue).sum();
+		}
+		
+		
 		// Finds the sum of all answers to obtain the ULTIMATE ANSWER
-		sum = answers.stream().mapToDouble(Double::doubleValue).sum();
-		System.out.println("The Reimann sum is " + sum);
+		if(sum_type <=3) {
+			sum = answers.stream().mapToDouble(Double::doubleValue).sum();
+		}else if(sum_type == 4) {
+			sum = trap_answers.stream().mapToDouble(Double::doubleValue).sum();
+		}else if(sum_type == 5){
+			sum = ((2 * mid) + trap)/3;
+		}
+		System.out.println("The Riemann sum is " + sum);
 		
 	}
 
