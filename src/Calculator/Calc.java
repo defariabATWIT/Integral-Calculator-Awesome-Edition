@@ -10,14 +10,13 @@ public class Calc {
 
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);
+		String rule = "Error, incorrect sum type inputted";
 		int values, exponents, rectangles, place;
 		double inputted_value, inputted_exponent;
 		List<Double> term_values = new ArrayList<>();
 		List<Double> term_exponents = new ArrayList<>();
 		List<Double> answers = new ArrayList<>();
 		List<Double> trap_answers = new ArrayList<>();
-		String rule = "Error";
-		
 		
 		double minimum, maximum, sum_type, range_modifier, answer3, placeholder;
 		double answer = 0, answer2 = 0, sum = 0, sum_changer = 0, mid = 0, trap = 0;
@@ -28,25 +27,31 @@ public class Calc {
 		System.out.println("Please input the original equation\n");
 		
 		// Takes in original equation
-		System.out.print("How many terms does the original equation have? ");
+		System.out.print("How many terms does the original equation have? (Ex: X + 3 has two values): ");
 		values = input.nextInt();
 		System.out.print("How many of the " + values + " values have a variable? ");
 		exponents = input.nextInt();
 		
 		for (int i = 0; i < values; i++) {
 			place = i + 1;
-			System.out.print("Enter the constant of term number " + place + ": ");
+			if (i == 0) {
+				System.out.print("(The constant of 'X' is '1') ");
+			}
+			System.out.printf("Enter the constant of term number %d: ", place);
 			inputted_value = input.nextInt();
 			term_values.add(inputted_value);
 			if (exponents > i) {
-				System.out.print("Enter the exponent of term number " + place + ": ");
+				if (i == 0) {
+					System.out.print("(The exponent of 'X' is '1') ");
+				}
+				System.out.printf("Enter the exponent of term number %d: ", place);
 				inputted_exponent = input.nextInt();
 				term_exponents.add(inputted_exponent);
 			}
 		}
 		
 		// Outputs original equation so you can verify this is my fault and not your own
-		System.out.println("The original equation is: ");
+		System.out.println("\nThe original equation is: ");
 		for (int p = 0; p < values; p++) {
 			System.out.print(term_values.get(p));
 			if (p < exponents) {
@@ -68,8 +73,8 @@ public class Calc {
 //		}
 		
 		// Asks for data related to the integral
-		System.out.println("");
-		System.out.print("Enter the minimum: ");
+		//System.out.println("");
+		System.out.print("\n\nEnter the minimum: ");
 		minimum = input.nextDouble();
 		System.out.print("Enter the maximum: ");
 		maximum = input.nextDouble();
@@ -80,7 +85,7 @@ public class Calc {
 		range_modifier = (maximum - minimum)/rectangles;
 		
 		// This changes one variable that messes with the x variable to determine the rule
-		System.out.println("Left, Right, Mid-point, Trapezoidal, or Simpson's Riemann's sum?");
+		System.out.println("\nLeft, Right, Mid-point, Trapezoidal, or Simpson's Riemann's sum?");
 		System.out.print("Enter '1', '2', '3', '4', or '5' respectively: ");
 		sum_type = input.nextInt();
 		
@@ -116,7 +121,7 @@ public class Calc {
 		}
 		
 		// Finds the Trapezoidal sum
-		if(sum_type > 3) {
+		if(sum_type == 3 || sum_type == 5) {
 			for(int w = 0; w < rectangles; w++) {
 				for(int u = 0; u < values; u++) {
 					placeholder = minimum + w * range_modifier;
@@ -153,8 +158,7 @@ public class Calc {
 		}else if(sum_type == 5){
 			sum = ((2 * mid) + trap)/3;
 		}
-		System.out.printf("The %s Riemann sum is %f%n", rule, sum);
-		
+		System.out.printf("%nThe %s Riemann sum is %f%n", rule, sum);
 	}
 
 }
