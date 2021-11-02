@@ -15,12 +15,14 @@ public class Calc {
 		double inputted_value, inputted_exponent;
 		List<Double> term_values = new ArrayList<>();
 		List<Double> term_exponents = new ArrayList<>();
+		List<Double> exacts = new ArrayList<>();
 		List<Double> answers = new ArrayList<>();
 		List<Double> trap_answers = new ArrayList<>();
 		
-		double minimum, maximum, sum_type, range_modifier, answer3, placeholder;
-		double answer = 0, answer2 = 0, sum = 0, sum_changer = 0, mid = 0, trap = 0;
+		double minimum, maximum, range_modifier, answer3, placeholder, simp, modded_exp, modded_val;
+		double answer = 0, answer2 = 0, sum = 0, sum_changer = 0, left = 0, right = 0, mid = 0, trap = 0, exact = 0;
 		
+		double leftEr, rightEr, midEr, trapEr, simpEr;
 		// Introductory message/ instructions
 		System.out.println("This calculator is used to find the Reimann sum of an equation with one variable");
 		System.out.println("This one variable is referred to as 'X'");
@@ -63,50 +65,50 @@ public class Calc {
 		}
 		
 		// Unused derivative finder, fully functional, un-comment to use
-//		System.out.println("");
-//		System.out.println("The derivative of the equation is: ");
-//		for (int p = 1; p < term_values.size(); p++) {
-//			System.out.print((term_values.get(p - 1) * term_exponents.get(p - 1)));
-//			if (p < term_exponents.size()) {
-//				System.out.print("x^" + (term_exponents.get(p - 1) - 1) + " + ");
-//			}
-//		}
+		// System.out.println("");
+		// System.out.println("The derivative of the equation is: ");
+		// for (int p = 1; p < term_values.size(); p++) {
+		//	System.out.print((term_values.get(p - 1) * term_exponents.get(p - 1)));
+		//	if (p < term_exponents.size()) {
+		//		System.out.print("x^" + (term_exponents.get(p - 1) - 1) + " + ");
+		//	}
+		//}
 		
 		// Asks for data related to the integral
-		//System.out.println("");
-		System.out.print("\n\nEnter the minimum: ");
+		System.out.print("\n\nEnter the lower limit: ");
 		minimum = input.nextDouble();
-		System.out.print("Enter the maximum: ");
+		System.out.print("Enter the upper limit: ");
 		maximum = input.nextDouble();
-		System.out.print("Enter number of rectangles: ");
+		System.out.print("Enter the number of subintervals: ");
 		rectangles = input.nextInt();
 		
 		// "(b - a)/ n" but the name is cooler
 		range_modifier = (maximum - minimum)/rectangles;
 		
-		// This changes one variable that messes with the x variable to determine the rule
-		System.out.println("\nLeft, Right, Mid-point, Trapezoidal, or Simpson's Riemann's sum?");
-		System.out.print("Enter '1', '2', '3', '4', or '5' respectively: ");
-		sum_type = input.nextInt();
-		
-		if(sum_type == 1) {
-			rule = "Left Hand";
-		}else if(sum_type == 2) {
-			sum_changer = 1;
-			rule = "Right Hand";
-		}else if(sum_type == 3){
-			sum_changer = 0.5;
-			rule = "Midpoint";
-		}else if(sum_type == 4) {
-			rule = "Trapezoidal";
-		}else if(sum_type == 5) {
-			sum_changer = 0.5;
-			rule = "Simpson's";
+		// Exact Definite Integral Formula
+		for(int u = 0; u < values; u++) {
+			if(u < exponents) {
+				modded_exp = term_exponents.get(u) + 1;
+				modded_val = term_values.get(u) / modded_exp;
+				answer = (modded_val * Math.pow(maximum, modded_exp)) - (modded_val * Math.pow(minimum, modded_exp));
+			}else {
+				answer = (term_values.get(u) * maximum) - (term_values.get(u) * minimum);
+			}
+			exacts.add(answer);
+			exact = exacts.stream().mapToDouble(Double::doubleValue).sum();
 		}
 		
 		// Riemann Sum equation. First loop is each rectangle x point, second loop is each value with that x
-		// Each answer is then added into a list. For Left Hand, Right Hand, and Midpoint
-		if(sum_type <= 3 || sum_type == 5) {
+		// Each answer is then added into a list.
+
+		// Does Lefthand, Righthand, then Midpoint sum
+		for(int count = 1; count < 4; count++) {
+			if(count == 2) {
+				sum_changer = 1;
+			}else if(count == 3) {
+				sum_changer = 0.5;
+			}
+		
 			for(int w = 0; w < rectangles; w++) {
 				for(int u = 0; u < values; u++) {
 					placeholder = minimum + ((w + sum_changer) * range_modifier);
@@ -118,47 +120,63 @@ public class Calc {
 					answers.add(answer);
 				}
 			}
+			
+			sum = answers.stream().mapToDouble(Double::doubleValue).sum();
+			
+			if(count == 1) {
+				left = sum;
+			}else if(count == 2) {
+				right = sum;
+			}else if(count == 3) {
+				mid = sum;
+			}
+			
+			// Wipes all data from the list so it can be reused
+			answers = new ArrayList<>();
+			
 		}
 		
 		// Finds the Trapezoidal sum
-		if(sum_type == 3 || sum_type == 5) {
-			for(int w = 0; w < rectangles; w++) {
-				for(int u = 0; u < values; u++) {
-					placeholder = minimum + w * range_modifier;
-					if(u < exponents) {
-						answer = Math.pow(placeholder, term_exponents.get(u)) * term_values.get(u);
-					}else {
-						answer = term_values.get(u);
-					}
-					
-					placeholder = minimum + (w + 1) * range_modifier;
-					if(u < exponents) {
-						answer2 = Math.pow(placeholder, term_exponents.get(u)) * term_values.get(u);
-					}else {
-						answer2 = term_values.get(u);
-					}
-					
-					answer3 = 0.5 * (answer + answer2) * range_modifier;
-					trap_answers.add(answer3);
+		for(int w = 0; w < rectangles; w++) {
+			for(int u = 0; u < values; u++) {
+				placeholder = minimum + w * range_modifier;
+				if(u < exponents) {
+					answer = Math.pow(placeholder, term_exponents.get(u)) * term_values.get(u);
+				}else {
+					answer = term_values.get(u);
 				}
+				
+				placeholder = minimum + (w + 1) * range_modifier;
+				if(u < exponents) {
+					answer2 = Math.pow(placeholder, term_exponents.get(u)) * term_values.get(u);
+				}else {
+					answer2 = term_values.get(u);
+				}
+				
+				answer3 = 0.5 * (answer + answer2) * range_modifier;
+				trap_answers.add(answer3);
+				trap = trap_answers.stream().mapToDouble(Double::doubleValue).sum();
 			}
 		}
 		
 		// Finds the Simpson's sum by calling the answers for Trapezoidal and Midpoint
-		if(sum_type == 5) {
-			mid = answers.stream().mapToDouble(Double::doubleValue).sum();
-			trap = trap_answers.stream().mapToDouble(Double::doubleValue).sum();
-		}
+		simp = ((2 * mid) + trap)/3;
 		
-		// Finds the sum of all answers to obtain the ULTIMATE ANSWER
-		if(sum_type <=3) {
-			sum = answers.stream().mapToDouble(Double::doubleValue).sum();
-		}else if(sum_type == 4) {
-			sum = trap_answers.stream().mapToDouble(Double::doubleValue).sum();
-		}else if(sum_type == 5){
-			sum = ((2 * mid) + trap)/3;
-		}
-		System.out.printf("%nThe %s Riemann sum is %f%n", rule, sum);
+		// Finds percent error of each method
+		leftEr = Math.abs((left - exact)/ exact * 100);
+		rightEr = Math.abs((right - exact)/ exact * 100);
+		midEr = Math.abs((mid - exact)/ exact * 100);
+		trapEr = Math.abs((trap - exact)/ exact * 100);
+		simpEr = Math.abs((simp - exact)/ exact * 100);
+		
+		// Prints out results
+		System.out.println("The Riemann sums are:");
+		System.out.println("Exact answer:    " + exact);
+		System.out.println("Lefthand sum:    " + left + ", Percent error: " + leftEr + "%");
+		System.out.println("Righthand sum:   " + right + ", Percent error: " + rightEr + "%");
+		System.out.println("Midpoint sum:    " + mid + ", Percent error: " + midEr + "%");
+		System.out.println("Trapezoidal sum: " + trap + ", Percent error: " + trapEr + "%");
+		System.out.println("Simpsons sum:    " + simp +  ", Percent error: " + simpEr + "%");
 	}
 
 }
