@@ -24,9 +24,9 @@ public class Calc {
 		
 		double leftEr, rightEr, midEr, trapEr, simpEr;
 		// Introductory message/ instructions
-		System.out.println("This calculator is used to find the Reimann sum of an equation with one variable");
-		System.out.println("This one variable is referred to as 'X'");
-		System.out.println("Please input the original equation\n");
+		System.out.println("This calculator is used to find the Riemann sum of an equation with one unique variable.");
+		System.out.println("This one variable is referred to as 'X'.");
+		System.out.println("Please input the original equation.\n");
 		
 		// Takes in original equation
 		System.out.print("How many terms does the original equation have? (Ex: X + 3 has two values): ");
@@ -37,7 +37,7 @@ public class Calc {
 		for (int i = 0; i < values; i++) {
 			place = i + 1;
 			if (i == 0) {
-				System.out.print("(The constant of 'X' is '1') ");
+				System.out.print("\n(The constant of 'X' is '1') ");
 			}
 			System.out.printf("Enter the constant of term number %d: ", place);
 			inputted_value = input.nextInt();
@@ -53,14 +53,23 @@ public class Calc {
 		}
 		
 		// Outputs original equation so you can verify this is my fault and not your own
-		System.out.println("\nThe original equation is: ");
+		System.out.println("\nThe original equation is: \n");
 		for (int p = 0; p < values; p++) {
-			System.out.print(term_values.get(p));
+			if (p > 0) {
+				System.out.print(Math.abs(term_values.get(p)));
+			}else {
+				System.out.print(term_values.get(p));
+			}
+			
 			if (p < exponents) {
 				System.out.print("x^" + term_exponents.get(p));
 			}
 			if (p < values - 1){
-				System.out.print(" + ");
+				if (term_values.get(p + 1) >= 0) {
+					System.out.print(" + ");
+				}else{
+					System.out.print(" - ");
+				}
 			}
 		}
 		
@@ -170,8 +179,8 @@ public class Calc {
 		simpEr = Math.abs((simp - exact)/ exact * 100);
 		
 		// Prints out results
-		System.out.println("The Riemann sums are:");
-		System.out.println("Exact answer:    " + exact);
+		System.out.println("\nExact answer:    " + exact);
+		System.out.println("\nThe Riemann sums are:\n");
 		System.out.println("Lefthand sum:    " + left + ", Percent error: " + leftEr + "%");
 		System.out.println("Righthand sum:   " + right + ", Percent error: " + rightEr + "%");
 		System.out.println("Midpoint sum:    " + mid + ", Percent error: " + midEr + "%");
