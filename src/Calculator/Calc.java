@@ -104,8 +104,9 @@ public class Calc {
 				answer = (term_values.get(u) * maximum) - (term_values.get(u) * minimum);
 			}
 			exacts.add(answer);
-			exact = exacts.stream().mapToDouble(Double::doubleValue).sum();
 		}
+		
+		exact = exacts.stream().mapToDouble(Double::doubleValue).sum();
 		
 		// Riemann Sum equation. First loop is each rectangle x point, second loop is each value with that x
 		// Each answer is then added into a list.
@@ -122,9 +123,9 @@ public class Calc {
 				for(int u = 0; u < values; u++) {
 					placeholder = minimum + ((w + sum_changer) * range_modifier);
 					if(u < exponents) {
-						answer = range_modifier * (Math.pow(placeholder, term_exponents.get(u)) * term_values.get(u));
+						answer = range_modifier * Math.pow(placeholder, term_exponents.get(u)) * term_values.get(u);
 					}else {
-						answer = term_values.get(u);
+						answer = range_modifier * term_values.get(u);
 					}
 					answers.add(answer);
 				}
@@ -164,9 +165,10 @@ public class Calc {
 				
 				answer3 = 0.5 * (answer + answer2) * range_modifier;
 				trap_answers.add(answer3);
-				trap = trap_answers.stream().mapToDouble(Double::doubleValue).sum();
 			}
 		}
+		
+		trap = trap_answers.stream().mapToDouble(Double::doubleValue).sum();
 		
 		// Finds the Simpson's sum by calling the answers for Trapezoidal and Midpoint
 		simp = ((2 * mid) + trap)/3;
